@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>КОНТЭК Инжиниринг — Админка</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--primary:#0f172a;--primary-light:#1e293b;--accent:#991b1b;--accent-hover:#b91c1c;--gold:#c5a059;--gold-light:#d4af37;--text:#334155;--text-light:#64748b;--bg:#ffffff;--bg-warm:#faf9f7;--border:#e2e8f0;--admin-bg:#0f172a;--admin-sidebar:#1e293b;--admin-card:#1e293b;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;color:var(--text);line-height:1.7;background:var(--bg);overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Playfair Display',serif;font-weight:600;color:var(--primary);line-height:1.2}
+header{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(15,23,42,0.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(197,160,89,0.15)}
+.header-inner{max-width:1280px;margin:0 auto;padding:0 40px;display:flex;justify-content:space-between;align-items:center;height:80px}
+.logo{display:flex;align-items:center;gap:16px;text-decoration:none}
+.logo-mark{width:44px;height:44px;background:linear-gradient(135deg,var(--accent) 0%,#7f1d1d 100%);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:20px;color:white;letter-spacing:1px}
+.logo-text{color:white}
+.logo-text .name{font-family:'Playfair Display',serif;font-size:22px;font-weight:600;letter-spacing:2px;display:block;line-height:1.1}
+.logo-text .tagline{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-top:2px}
+nav ul{display:flex;list-style:none;gap:36px;align-items:center}
+nav a{color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;transition:all 0.3s;position:relative;padding-bottom:4px}
+nav a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--gold);transition:width 0.3s}
+nav a:hover{color:white}
+nav a:hover::after{width:100%}
+.nav-cta{background:linear-gradient(135deg,var(--accent) 0%,#7f1d1d 100%);color:white !important;padding:10px 24px !important;font-size:12px !important}
+.nav-cta::after{display:none !important}
+.nav-cta:hover{background:linear-gradient(135deg,var(--accent-hover) 0%,#991b1b 100%)}
+.admin-link{color:var(--gold) !important;font-size:11px !important}
+.admin-link::after{background:var(--gold) !important}
+.hero{min-height:100vh;background:linear-gradient(135deg,var(--primary) 0%,#020617 50%,var(--primary-light) 100%);display:flex;align-items:center;position:relative;overflow:hidden;padding-top:80px}
+.hero::before{content:'';position:absolute;top:-50%;right:-20%;width:800px;height:800px;background:radial-gradient(circle,rgba(197,160,89,0.08) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-30%;left:-10%;width:600px;height:600px;background:radial-gradient(circle,rgba(153,27,27,0.1) 0%,transparent 70%);pointer-events:none}
+.hero-inner{max-width:1280px;margin:0 auto;padding:0 40px;display:grid;grid-template-columns:1.2fr 1fr;gap:80px;align-items:center;position:relative;z-index:1}
+.hero-label{display:inline-flex;align-items:center;gap:12px;color:var(--gold);font-size:12px;letter-spacing:4px;text-transform:uppercase;margin-bottom:32px}
+.hero-label .line{width:40px;height:1px;background:var(--gold)}
+.hero h1{font-size:64px;color:white;margin-bottom:28px;font-weight:500}
+.hero h1 span{color:var(--gold);font-style:italic}
+.hero-desc{font-size:18px;color:rgba(255,255,255,0.6);max-width:540px;margin-bottom:48px;line-height:1.8}
+.hero-buttons{display:flex;gap:20px}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:16px 36px;text-decoration:none;font-size:13px;letter-spacing:2px;text-transform:uppercase;transition:all 0.4s;cursor:pointer;border:none;font-family:'Inter',sans-serif}
+.btn-primary{background:linear-gradient(135deg,var(--accent) 0%,#7f1d1d 100%);color:white}
+.btn-primary:hover{background:linear-gradient(135deg,var(--accent-hover) 0%,#991b1b 100%);transform:translateY(-2px);box-shadow:0 10px 40px rgba(153,27,27,0.3)}
+.btn-outline{background:transparent;color:white;border:1px solid rgba(255,255,255,0.2)}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.btn-sm{padding:10px 20px;font-size:12px}
+.btn-gold{background:var(--gold);color:var(--primary)}
+.btn-gold:hover{background:var(--gold-light)}
+.btn-danger{background:#dc2626;color:white}
+.btn-danger:hover{background:#b91c1c}
+.btn-success{background:#16a34a;color:white}
+.btn-success:hover{background:#15803d}
+.hero-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:40px}
+.stat-item{text-align:left;padding:32px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);backdrop-filter:blur(10px)}
+.stat-number{font-family:'Playfair Display',serif;font-size:48px;color:var(--gold);font-weight:600;line-height:1;margin-bottom:8px}
+.stat-label{font-size:13px;color:rgba(255,255,255,0.5);letter-spacing:1px;text-transform:uppercase}
+section{padding:120px 40px}
+.section-inner{max-width:1280px;margin:0 auto}
+.section-header{text-align:center;margin-bottom:80px;max-width:700px;margin-left:auto;margin-right:auto}
+.section-label{display:inline-flex;align-items:center;gap:12px;color:var(--accent);font-size:12px;letter-spacing:4px;text-transform:uppercase;margin-bottom:20px}
+.section-label .line{width:30px;height:1px;background:var(--accent)}
+.section-header h2{font-size:44px;margin-bottom:20px}
+.section-header p{color:var(--text-light);font-size:17px}
+.about{background:var(--bg-warm)}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.about-image{position:relative}
+.about-image .img-box{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);min-height:500px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.about-image .img-box img{width:100%;height:100%;object-fit:cover;display:block}
+.about-image .img-box i{font-size:80px;color:rgba(197,160,89,0.3);position:relative;z-index:1}
+.about-content h2{font-size:40px;margin-bottom:28px}
+.about-content p{margin-bottom:20px;color:var(--text);font-size:16px}
+.about-features{margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.about-feature{display:flex;align-items:flex-start;gap:16px}
+.about-feature i{color:var(--accent);font-size:20px;margin-top:2px}
+.about-feature span{font-weight:500;color:var(--primary);font-size:15px}
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+.service-card{background:white;border:1px solid var(--border);padding:48px 36px;transition:all 0.4s;position:relative;overflow:hidden}
+.service-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--accent),var(--gold));transform:scaleX(0);transform-origin:left;transition:transform 0.4s}
+.service-card:hover::before{transform:scaleX(1)}
+.service-card:hover{border-color:transparent;box-shadow:0 20px 60px rgba(0,0,0,0.08);transform:translateY(-4px)}
+.service-icon{width:60px;height:60px;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);display:flex;align-items:center;justify-content:center;margin-bottom:28px}
+.service-icon i{color:var(--gold);font-size:22px}
+.service-card h3{font-size:22px;margin-bottom:16px}
+.service-card p{color:var(--text-light);font-size:15px;line-height:1.7}
+.service-list{margin-top:20px;list-style:none}
+.service-list li{padding:6px 0;font-size:14px;color:var(--text);display:flex;align-items:center;gap:10px}
+.service-list li::before{content:'';width:6px;height:6px;background:var(--gold);flex-shrink:0}
+.it-section{background:linear-gradient(135deg,var(--primary) 0%,#0a0f1d 100%);position:relative;overflow:hidden}
+.it-section::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
+.it-section .section-header h2,.it-section .section-header p{color:white}
+.it-section .section-label{color:var(--gold)}
+.it-section .section-label .line{background:var(--gold)}
+.it-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:30px;position:relative;z-index:1}
+.it-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);padding:48px;transition:all 0.4s}
+.it-card:hover{background:rgba(255,255,255,0.05);border-color:rgba(197,160,89,0.3);transform:translateY(-4px)}
+.it-card .it-icon{width:64px;height:64px;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;margin-bottom:28px}
+.it-card .it-icon i{color:var(--gold);font-size:24px}
+.it-card h3{color:white;font-size:24px;margin-bottom:16px}
+.it-card p{color:rgba(255,255,255,0.6);font-size:15px;line-height:1.8;margin-bottom:20px}
+.it-card .it-list{list-style:none}
+.it-card .it-list li{padding:8px 0;color:rgba(255,255,255,0.7);font-size:14px;display:flex;align-items:center;gap:12px}
+.it-card .it-list li i{color:var(--gold);font-size:12px}
+.it-badge{display:inline-block;background:linear-gradient(135deg,var(--accent) 0%,#7f1d1d 100%);color:white;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:6px 14px;margin-bottom:20px}
+.projects{background:var(--bg-warm)}
+.projects-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border)}
+.project-item{background:white;padding:40px 32px;transition:all 0.4s;position:relative}
+.project-item:hover{background:var(--primary)}
+.project-item:hover h4{color:white}
+.project-item:hover p{color:rgba(255,255,255,0.6)}
+.project-item:hover .project-icon{color:var(--gold)}
+.project-icon{color:var(--accent);font-size:28px;margin-bottom:20px;transition:color 0.4s}
+.project-item h4{font-size:18px;margin-bottom:12px;transition:color 0.4s}
+.project-item p{font-size:14px;color:var(--text-light);line-height:1.6;transition:color 0.4s}
+.project-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-top:40px}
+.gallery-item{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--primary-light)}
+.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s}
+.gallery-item:hover img{transform:scale(1.05)}
+.gallery-overlay{position:absolute;bottom:0;left:0;right:0;padding:20px;background:linear-gradient(transparent,rgba(15,23,42,0.9));color:white}
+.gallery-overlay h4{color:white;font-size:16px;margin-bottom:4px}
+.gallery-overlay p{color:rgba(255,255,255,0.7);font-size:13px}
+.cta{background:linear-gradient(135deg,var(--primary) 0%,#020617 100%);text-align:center;position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(197,160,89,0.06) 0%,transparent 70%);pointer-events:none}
+.cta h2{color:white;font-size:48px;margin-bottom:24px;position:relative}
+.cta p{color:rgba(255,255,255,0.5);font-size:18px;max-width:600px;margin:0 auto 40px;position:relative}
+footer{background:#020617;padding:80px 40px 40px;border-top:1px solid rgba(197,160,89,0.1)}
+.footer-inner{max-width:1280px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:60px;margin-bottom:60px}
+.footer-brand .logo-text .name{color:white;font-size:24px}
+.footer-brand .logo-text .tagline{color:var(--gold)}
+.footer-brand p{color:rgba(255,255,255,0.4);font-size:14px;margin-top:20px;line-height:1.8}
+.footer-col h4{color:white;font-size:14px;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;font-family:'Inter',sans-serif;font-weight:500}
+.footer-col ul{list-style:none}
+.footer-col li{margin-bottom:12px}
+.footer-col a{color:rgba(255,255,255,0.4);text-decoration:none;font-size:14px;transition:color 0.3s}
+.footer-col a:hover{color:var(--gold)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.05);padding-top:30px;display:flex;justify-content:space-between;align-items:center}
+.footer-bottom p{color:rgba(255,255,255,0.3);font-size:13px}
+.footer-social{display:flex;gap:16px}
+.footer-social a{width:40px;height:40px;border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.4);transition:all 0.3s;text-decoration:none}
+.footer-social a:hover{border-color:var(--gold);color:var(--gold)}
+.admin-body{background:var(--admin-bg);min-height:100vh;color:#e2e8f0}
+.admin-header{background:var(--admin-sidebar);border-bottom:1px solid rgba(197,160,89,0.15);padding:0 30px;height:64px;display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:2000}
+.admin-header-left{display:flex;align-items:center;gap:20px}
+.admin-header-left .logo-mark{width:36px;height:36px;font-size:16px}
+.admin-header-left .logo-text .name{font-size:18px}
+.admin-header-left .logo-text .tagline{font-size:9px}
+.admin-header-right{display:flex;align-items:center;gap:16px}
+.admin-user{display:flex;align-items:center;gap:10px;color:rgba(255,255,255,0.7);font-size:14px}
+.admin-user i{color:var(--gold)}
+.admin-container{display:flex;min-height:100vh;padding-top:64px}
+.admin-sidebar{width:260px;background:var(--admin-sidebar);border-right:1px solid rgba(255,255,255,0.05);padding:24px 0;position:fixed;top:64px;bottom:0;left:0;overflow-y:auto}
+.admin-nav{list-style:none}
+.admin-nav li{margin-bottom:4px}
+.admin-nav a{display:flex;align-items:center;gap:14px;padding:12px 24px;color:rgba(255,255,255,0.6);text-decoration:none;font-size:14px;transition:all 0.2s;border-left:3px solid transparent}
+.admin-nav a:hover,.admin-nav a.active{color:white;background:rgba(197,160,89,0.08);border-left-color:var(--gold)}
+.admin-nav a i{width:20px;text-align:center}
+.admin-nav-section{padding:16px 24px 8px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+.admin-main{flex:1;margin-left:260px;padding:32px;max-width:calc(100% - 260px)}
+.admin-page{display:none}
+.admin-page.active{display:block}
+.admin-page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.admin-page-header h2{color:white;font-size:28px;font-family:'Playfair Display',serif}
+.admin-card{background:var(--admin-card);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:28px;margin-bottom:24px}
+.admin-card h3{color:white;font-size:16px;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.admin-card h3 i{color:var(--gold);font-size:14px}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:8px;letter-spacing:0.5px}
+.form-group input[type="text"],.form-group input[type="password"],.form-group textarea,.form-group select{width:100%;padding:12px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:white;font-size:14px;font-family:'Inter',sans-serif;transition:all 0.2s}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{outline:none;border-color:var(--gold);background:rgba(255,255,255,0.07)}
+.form-group textarea{min-height:100px;resize:vertical}
+.form-group small{color:rgba(255,255,255,0.3);font-size:12px;margin-top:6px;display:block}
+.admin-table{width:100%;border-collapse:collapse;font-size:14px}
+.admin-table th{text-align:left;padding:14px 16px;color:rgba(255,255,255,0.5);font-weight:500;border-bottom:1px solid rgba(255,255,255,0.08);font-size:12px;letter-spacing:1px;text-transform:uppercase}
+.admin-table td{padding:14px 16px;color:rgba(255,255,255,0.8);border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle}
+.admin-table tr:hover td{background:rgba(255,255,255,0.02)}
+.admin-table .actions{display:flex;gap:8px}
+.admin-table .actions button{padding:6px 12px;font-size:12px;border:none;border-radius:4px;cursor:pointer;transition:all 0.2s}
+.image-preview{width:120px;height:80px;object-fit:cover;border-radius:4px;border:1px solid rgba(255,255,255,0.1)}
+.image-preview-lg{width:100%;max-height:300px;object-fit:cover;border-radius:6px;border:1px solid rgba(255,255,255,0.1);margin-top:12px}
+.upload-zone{border:2px dashed rgba(197,160,89,0.3);border-radius:8px;padding:40px;text-align:center;cursor:pointer;transition:all 0.3s;background:rgba(255,255,255,0.02)}
+.upload-zone:hover{border-color:var(--gold);background:rgba(197,160,89,0.05)}
+.upload-zone i{font-size:32px;color:var(--gold);margin-bottom:12px}
+.upload-zone p{color:rgba(255,255,255,0.5);font-size:14px}
+.upload-zone input{display:none}
+.gallery-admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:24px}
+.gallery-admin-item{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:6px;overflow:hidden;position:relative}
+.gallery-admin-item img{width:100%;height:140px;object-fit:cover}
+.gallery-admin-item .info{padding:12px}
+.gallery-admin-item .info p{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gallery-admin-item .info input{width:100%;padding:6px 10px;font-size:13px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:4px;color:white;margin-bottom:8px}
+.gallery-admin-item .actions{display:flex;gap:6px;padding:0 12px 12px}
+.gallery-admin-item .actions button{flex:1;padding:6px;font-size:11px;border:none;border-radius:4px;cursor:pointer}
+.section-editor{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:24px;margin-bottom:20px}
+.section-editor h4{color:var(--gold);font-size:14px;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;font-family:'Inter',sans-serif;font-weight:500}
+.login-box{max-width:420px;margin:80px auto;padding:48px;background:var(--admin-card);border:1px solid rgba(255,255,255,0.08);border-radius:12px;text-align:center}
+.login-box .logo{justify-content:center;margin-bottom:32px}
+.login-box h2{color:white;margin-bottom:8px}
+.login-box p{color:rgba(255,255,255,0.4);font-size:14px;margin-bottom:32px}
+.badge{display:inline-block;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:500}
+.badge-green{background:rgba(22,163,74,0.15);color:#4ade80}
+.badge-blue{background:rgba(59,130,246,0.15);color:#60a5fa}
+.badge-amber{background:rgba(245,158,11,0.15);color:#fbbf24}
+.toast{position:fixed;bottom:30px;right:30px;padding:16px 24px;border-radius:8px;color:white;font-size:14px;z-index:9999;transform:translateY(100px);opacity:0;transition:all 0.4s;display:flex;align-items:center;gap:12px;box-shadow:0 10px 40px rgba(0,0,0,0.4)}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:#16a34a}
+.toast.error{background:#dc2626}
+.toast.info{background:#2563eb}
+.tabs{display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.tab-btn{padding:12px 20px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:14px;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;font-family:'Inter',sans-serif}
+.tab-btn:hover{color:white}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+.empty-state{text-align:center;padding:60px 20px;color:rgba(255,255,255,0.3)}
+.empty-state i{font-size:48px;margin-bottom:16px;display:block}
+.empty-state p{font-size:15px}
+@media(max-width:1024px){.hero-inner{grid-template-columns:1fr;text-align:center}.hero h1{font-size:42px}.hero-desc{margin-left:auto;margin-right:auto}.hero-buttons{justify-content:center}.hero-stats{max-width:500px;margin:0 auto}.about-grid{grid-template-columns:1fr}.services-grid{grid-template-columns:repeat(2,1fr)}.it-grid{grid-template-columns:1fr}.projects-grid{grid-template-columns:repeat(2,1fr)}.footer-grid{grid-template-columns:1fr 1fr}.admin-sidebar{display:none}.admin-main{margin-left:0;max-width:100%}}
+@media(max-width:768px){.header-inner{padding:0 20px}nav{display:none}section{padding:80px 20px}.hero h1{font-size:32px}.section-header h2{font-size:32px}.services-grid{grid-template-columns:1fr}.projects-grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr;gap:40px}.about-features{grid-template-columns:1fr}.admin-main{padding:20px}}
+html{scroll-behavior:smooth}
+</style>
+</head>
+<body>
+<div id="public-site">
+<header>
+<div class="header-inner">
+<a href="#" class="logo"><div class="logo-mark">К</div><div class="logo-text"><span class="name">КОНТЭК</span><span class="tagline">Инжиниринг</span></div></a>
+<nav><ul>
+<li><a href="#about">О компании</a></li>
+<li><a href="#services">Услуги</a></li>
+<li><a href="#it">IT-решения</a></li>
+<li><a href="#projects">Проекты</a></li>
+<li><a href="#contacts">Контакты</a></li>
+<li><a href="/portal" class="admin-link"><i class="fas fa-lock" style="font-size:10px;margin-right:4px;"></i>Портал</a></li>
+</ul></nav>
+</div>
+</header>
+
+<section class="hero">
+<div class="hero-inner">
+<div class="hero-content">
+<div class="hero-label"><span class="line"></span><span id="hero-label-text">С 2006 года в энергетике. С 2020 — в цифровой инфраструктуре</span></div>
+<h1 id="hero-title">Инфраструктура<br>для майнинга,<br><span>ИИ и цифровизации</span></h1>
+<p class="hero-desc" id="hero-desc">Начинали с электроснабжения промышленных объектов. Сегодня проектируем и строим ЦОД, майнинг-фермы и ИИ-кластеры под ключ — от ТЭО до запуска.</p>
+<div class="hero-buttons">
+<a href="#services" class="btn btn-primary"><i class="fas fa-arrow-right"></i>Наши услуги</a>
+<a href="#contacts" class="btn btn-outline"><i class="fas fa-phone"></i>Связаться</a>
+</div>
+</div>
+<div class="hero-stats">
+<div class="stat-item"><div class="stat-number" id="stat1">18+</div><div class="stat-label" id="stat1-label">Лет в энергетике</div></div>
+<div class="stat-item"><div class="stat-number" id="stat2">50+</div><div class="stat-label" id="stat2-label">ЦОД и майнинг-ферм</div></div>
+<div class="stat-item"><div class="stat-number" id="stat3">110</div><div class="stat-label" id="stat3-label">МВт суммарной мощности</div></div>
+<div class="stat-item"><div class="stat-number" id="stat4">99,9%</div><div class="stat-label" id="stat4-label">Uptime инфраструктуры</div></div>
+</div>
+</div>
+</section>
+
+<section class="about" id="about">
+<div class="section-inner">
+<div class="about-grid">
+<div class="about-image">
+<div class="img-box" id="about-img-box">
+<img id="about-image" src="" alt="" style="display:none;">
+<i class="fas fa-industry" id="about-icon"></i>
+</div>
+</div>
+<div class="about-content">
+<div class="section-label" style="justify-content:flex-start;margin-bottom:16px;"><span class="line"></span>О компании</div>
+<h2 id="about-title">От электросетей к цифровой инфраструктуре</h2>
+<p id="about-text1">18 лет назад мы начинали с проектирования электроснабжения промышленных объектов — котельных, подстанций, ЛЭП. Прошли путь от бумажных чертежей до цифровых двойников.</p>
+<p id="about-text2">Сегодня наша экспертиза — проектирование и строительство ЦОД, майнинг-ферм и ИИ-кластеров под ключ. Мы понимаем энергетику снизу вверх: от подстанции до ASIC-стойки. Это даёт нам преимущество перед чистыми IT-интеграторами.</p>
+<div class="about-features">
+<div class="about-feature"><i class="fas fa-check-circle"></i><span id="feat1">Электроснабжение до 110 кВ под ключ</span></div>
+<div class="about-feature"><i class="fas fa-check-circle"></i><span id="feat2">Проектирование ЦОД и майнинг-ферм</span></div>
+<div class="about-feature"><i class="fas fa-check-circle"></i><span id="feat3">Тепло- и вентиляция для ASIC/GPU</span></div>
+<div class="about-feature"><i class="fas fa-check-circle"></i><span id="feat4">Монтаж и запуск за 90 дней</span></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="services" id="services">
+<div class="section-inner">
+<div class="section-header">
+<div class="section-label"><span class="line"></span><span id="services-label">Инжиниринг</span></div>
+<h2 id="services-title">Инфраструктура для цифровых активов</h2>
+<p id="services-desc">От подстанции до первой стойки: проектирование, строительство и запуск объектов для майнинга, ИИ и блокчейна</p>
+</div>
+<div class="services-grid" id="services-grid"></div>
+</div>
+</section>
+
+<section class="it-section" id="it">
+<div class="section-inner">
+<div class="section-header">
+<div class="section-label"><span class="line"></span><span id="it-label">Цифровая трансформация</span></div>
+<h2 id="it-title">IT-инфраструктура для цифровой экономики</h2>
+<p id="it-desc">Разработка и внедрение программно-аппаратных комплексов для майнинга, блокчейна и ИИ. От концепции до промышленной эксплуатации.</p>
+</div>
+<div class="it-grid" id="it-grid"></div>
+</div>
+</section>
+
+<section class="projects" id="projects">
+<div class="section-inner">
+<div class="section-header">
+<div class="section-label"><span class="line"></span><span id="projects-label">Портфолио</span></div>
+<h2 id="projects-title">Построенные объекты</h2>
+<p id="projects-desc">ЦОД, майнинг-фермы и энергетические объекты, запущенные нашей командой</p>
+</div>
+<div class="projects-grid" id="projects-grid"></div>
+<div class="section-header" style="margin-top:100px;margin-bottom:40px;">
+<div class="section-label"><span class="line"></span>Галерея</div>
+<h2 id="gallery-title">Фотогалерея объектов</h2>
+</div>
+<div class="project-gallery" id="gallery-grid"></div>
+</div>
+</section>
+
+<section class="cta" id="contacts">
+<div class="section-inner">
+<h2 id="cta-title">Запустим вашу ферму</h2>
+<p id="cta-desc">Рассчитаем ROI, подберём площадку и подготовим ТЭО для вашего объекта цифровой инфраструктуры</p>
+<a href="mailto:info@kontek.ru" class="btn btn-primary" style="font-size:14px;padding:18px 48px;" id="cta-btn"><i class="fas fa-envelope"></i>Получить расчёт</a>
+</div>
+</section>
+
+<footer>
+<div class="footer-inner">
+<div class="footer-grid">
+<div class="footer-brand">
+<div class="logo-text"><span class="name">КОНТЭК</span><span class="tagline">Инжиниринг</span></div>
+<p id="footer-address">ООО «КОНТЭК Инжиниринг»<br>195221, г. Санкт-Петербург,<br>Ключевая ул., д. 30, «THE OFFICE», оф. 305<br><br>Тел.: (812) 249-91-15<br>E-mail: info@kontek.ru</p>
+</div>
+<div class="footer-col"><h4>Инжиниринг</h4><ul>
+<li><a href="#">Электроснабжение до 110 кВ</a></li>
+<li><a href="#">Проектирование ЦОД</a></li>
+<li><a href="#">Строительство ферм</a></li>
+<li><a href="#">Энергоаудит и оптимизация</a></li>
+<li><a href="#">Мониторинг 24/7</a></li>
+</ul></div>
+<div class="footer-col"><h4>IT-решения</h4><ul>
+<li><a href="#">ЦОД и майнинг-фермы</a></li>
+<li><a href="#">Блокчейн-инфраструктура</a></li>
+<li><a href="#">ИБ и защита КИИ</a></li>
+<li><a href="#">GPU-кластеры для ИИ</a></li>
+<li><a href="#">Инвестиционные ТЭО</a></li>
+</ul></div>
+<div class="footer-col"><h4>Компания</h4><ul>
+<li><a href="#">О нас</a></li>
+<li><a href="#">Проекты</a></li>
+<li><a href="#">Допуски СРО</a></li>
+<li><a href="#">Контакты</a></li>
+</ul></div>
+</div>
+<div class="footer-bottom">
+<p>© ООО «КОНТЭК Инжиниринг». Все права защищены.</p>
+<div class="footer-social">
+<a href="#"><i class="fab fa-telegram"></i></a>
+<a href="#"><i class="fab fa-vk"></i></a>
+<a href="#"><i class="fab fa-linkedin-in"></i></a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+
+<script>
+const DEFAULT_DATA = {
+    hero: {
+        label: "С 2015 года в энергетике. С 2024 — в цифровой инфраструктуре",
+        title: "Проектирование и строительство объектов цифровой инфраструктуры<br><br><span></span>",
+        desc: "Начинали с энергоснабжения промышленных объектов. Сегодня проектируем и строим ЦОДы, майнинг-фермы и ИИ-кластеры под ключ — от ТЭО до запуска.",
+        stats: [{"num": "18+", "label": "Лет в энергетике"}, {"num": "50+", "label": "ЦОД и майнинг-ферм"}, {"num": "110", "label": "МВт суммарной мощности"}, {"num": "99,9%", "label": "Uptime инфраструктуры"}],
+    },
+    about: {
+        title: "От энергоснабжения к цифровой инфраструктуре",
+        text1: "11 лет назад мы начинали с проектирования и строительства энергоснабжения промышленных объектов — котельных, подстанций, ЛЭП. Прошли путь от бумажных чертежей до цифровых двойников.",
+        text2: "Сегодня наша экспертиза — проектирование и строительство ЦОД, майнинг-ферм и ИИ-кластеров под ключ. Мы понимаем энергетику снизу вверх: от подстанции до ASIC-стойки. Это даёт нам преимущество перед другими IT-интеграторами.",
+        features: ["Электроснабжение до 110 кВ под ключ", "Проектирование ЦОД и майнинг-ферм", "Тепло- и вентиляция для ASIC/GPU", "Монтаж и запуск за 90 дней"],
+        image: "",
+    },
+    servicesHeader: {
+        label: "Инжиниринг",
+        title: "Инфраструктура для цифровых активов",
+        desc: "От подстанции до первой стойки: проектирование, строительство и запуск объектов для майнинга, ИИ и блокчейна",
+    },
+    services: [{"icon": "fa-bolt", "title": "Электроснабжение для майнинга", "desc": "Полный цикл подключения объектов к электрическим сетям напряжением до 110 кВ и сетям газоснабжения. От заявки в сетевую компанию до акта технологического присоединения.", "items": ["Технологическое присоединение до 110 кВ", "Проектирование подстанций и РТП", "Увеличение мощности под ASIC-фермы", "Согласование с Ростехнадзором", "Ввод в эксплуатацию", "Постановка на учет объектов и внесение в соответствующие реестры"]}, {"icon": "fa-server", "title": "Проектирование ЦОД и майнинг-ферм", "desc": "Разработка проектной документации для ЦОД, майнинг-ферм и ИИ-кластеров с учётом требований к энергоэффективности и охлаждению.", "items": ["ТЭО и концепция объекта", "Проект энергоснабжения", "Системы прецизионного охлаждения", "СКС и сети передачи данных"]}, {"icon": "fa-temperature-low", "title": "Охлаждение и вентиляция", "desc": "Проектирование и монтаж систем охлаждения для ASIC- и GPU-ферм. От иммерсионных систем до промышленных чиллеров.", "items": ["Иммерсионное охлаждение ASIC", "Промышленные чиллеры и фанкойлы", "Системы горячего и холодного коридоров", "Системы мониторинга окружающей среды (СМОС) в реальном времени"]}, {"icon": "fa-hard-hat", "title": "Строительство под ключ", "desc": "Строительство и реконструкция объектов под ЦОД и майнинг-фермы. От нулевого цикла до ввода в эксплуатацию", "items": ["Капитальное строительство и реконструкция", "Технологические присоединения к энергосетям", "Монтаж оборудования", "Установка ДГУ и ИБП"]}, {"icon": "fa-chart-line", "title": "Энергоаудит и оптимизация", "desc": "Аудит существующих объектов для снижения затрат на электроэнергию и повышения эффективности.", "items": ["Энергетический паспорт объекта", "Анализ PUE и WUE", "Оптимизация тарифов на электроэнергию", "Программа энергоэффективности"]}, {"icon": "fa-shield-halved", "title": "Информационная безопасность", "desc": "Защита ИТ-инфраструктуры объектов критической информационной инфраструктуры. Соответствие 187-ФЗ и требованиям регуляторов.", "items": ["Аудит ИБ и оценка рисков", "Защита периметра и СЗИ", "Соответствие 187-ФЗ,244-ФЗ 152-ФЗ", "Внедрение SIEM и SOC"]}],
+    it: [{"badge": "Флагман", "icon": "fa-server", "title": "ЦОД и майнинг-фермы под ключ", "desc": "Полный цикл создания объектов для добычи криптовалюты и обучения ИИ-моделей: от выбора площадки до запуска первой стойки.", "items": ["ТЭО для выбора площадки", "Проектирование инженерных систем", "Системы бесперебойного питания и ДГУ", "Иммерсионное и воздушное охлаждение", "Монтаж стоек и коммутация", "Пусконаладка и ввод в эксплуатацию"]}, {"icon": "fa-bitcoin-sign", "title": "Блокчейн-инфраструктура", "desc": "Развёртывание нод, валидаторов и инфраструктуры для блокчейн-проектов. Локальные решения без зависимости от облаков.", "items": ["Развёртывание нод и валидаторов", "Локальные блокчейн-сети", "Инфраструктура для DeFi-протоколов", "Мониторинг и резервирование нод", "Техническая поддержка 24/7"]}, {"icon": "fa-brain", "title": "ИИ-кластеры и GPU-фермы", "desc": "Проектирование и сборка вычислительных кластеров для обучения нейросетей и инференса ИИ-моделей.", "items": ["Подбор GPU и конфигурация кластера", "Системы охлаждения GPU", "Оптимизация энергопотребления", "Интеграция с фреймворками PyTorch/TensorFlow", "Масштабирование под задачи заказчика"]}, {"icon": "fa-microchip", "title": "АСУ ТП и мониторинг", "desc": "Программно-аппаратные комплексы для диспетчеризации и удалённого управления объектами цифровой инфраструктуры.", "items": ["SCADA-системы для ЦОД", "Узлы учёта электроэнергии с удалённой передачей", "Мониторинг температуры и влажности", "Автоматизация аварийного отключения", "Интеграция с пулами и майнинг-ПО"]}, {"icon": "fa-chart-line", "title": "Бизнес-аналитика и инвестиции", "desc": "Подготовка обоснований для инвесторов и банков. Расчёт ROI, сроков окупаемости и оптимальных тарифов.", "items": ["ТЭО и бизнес-план майнинг-фермы", "Расчёт ROI и срока окупаемости", "Анализ энерготарифов по регионам", "Инвестиционные презентации", "Роадмап развития объекта"]}, {"icon": "fa-network-wired", "title": "Сети и телекоммуникации", "desc": "Проектирование и монтаж сетевой инфраструктуры для объектов с высокими требованиями к пропускной способности.", "items": ["СКС категории 6A/7/8 для ЦОД", "Оптические магистрали 10/40/100 Гбит/с", "Резервирование каналов связи", "Безопасные Wi-Fi и беспроводные сети предприятий", "Организация каналов приёма и передачи данных"]}],
+    projects: [{"icon": "fa-server", "title": "Технологическое присоединение электроустановок ПАО «НОВАТЭК» комплекс Усть-Луга.", "desc": "Проектирование и строительство подводящих электрических сетей, от источника ПС 110/10 кВт до объекта. 16 МВт."}, {"icon": "fa-bolt", "title": "ASIC-ферма 9,2 МВт, Красноярский край", "desc": "Реконструкция промздания под майнинг-ферму на 6500 ASIC. Монтаж ДГУ, ИБП и системы горячего и холодного коридоров."}, {"icon": "fa-temperature-low", "title": "GPU-кластер для ИИ, СПб", "desc": "Сборка и запуск кластера из 128 GPU для обучения LLM. Система жидкостного охлаждения с PUE 1,15."}, {"icon": "fa-network-wired", "title": "Блокчейн-ноды, дата-центр", "desc": "Развёртывание инфраструктуры для 50+ валидаторов. Резервирование каналов, мониторинг uptime 99,99%."}, {"icon": "fa-industry", "title": "Подстанция 110/10 кВ «Ниссан»", "desc": "Классический энергопроект: прокладка КЛ-110 кВ и строительство ПС для промышленного объекта."}, {"icon": "fa-fire", "title": "Реконструкция тепловых сетей (около 10 км)", "desc": "Замена всех подводящих коммуникаций к котельным (газопровод, водопровод, канализация, электроснабжение)."}, {"icon": "fa-chart-line", "title": "Электроснабжение Базы хоккейного клуба СКА.", "desc": "Проектирование и строительство подводящих электрических сетей 10-0,4 кВ, 4 МВт."}, {"icon": "fa-shield-halved", "title": "Защита КИИ", "desc": "Внедрение комплекса СЗИ и SIEM для критической информационной инфраструктуры."}],
+    itHeader: {
+        label: "Цифровая трансформация",
+        title: "IT-инфраструктура для цифровой экономики",
+        desc: "Разработка и внедрение программно-аппаратных комплексов для майнинга, блокчейна и ИИ. От концепции до промышленной эксплуатации.",
+    },
+    projectsHeader: {
+        label: "Портфолио",
+        title: "Построенные объекты",
+        desc: "ЦОД, майнинг-фермы и энергетические объекты, запущенные нашей командой",
+    },
+    contacts: {
+        footerAddress: "ООО «КОНТЭК Инжиниринг»<br>\n195221, г. Санкт-Петербург,<br>\nКлючевая ул., д. 30, «THE OFFICE», оф. 305<br><br>\nТел.: (812) 249-91-15<br>\nE-mail: info@kontek.ru",
+        ctaTitle: "Запустим вашу ферму",
+        ctaDesc: "Рассчитаем ROI, подберём площадку и подготовим ТЭО для вашего объекта цифровой инфраструктуры",
+        ctaBtn: "Получить расчёт",
+    },
+    gallery: []
+};
+
+let siteData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+
+// Приоритет источников контента: база данных (правки из портала) → встроенные тексты.
+// Старые правки в localStorage больше не используются.
+function mergeContent(parsed) {
+    siteData = {...DEFAULT_DATA, ...parsed};
+    siteData.servicesHeader = {...DEFAULT_DATA.servicesHeader, ...(parsed.servicesHeader || {})};
+    siteData.itHeader = {...DEFAULT_DATA.itHeader, ...(parsed.itHeader || {})};
+    siteData.projectsHeader = {...DEFAULT_DATA.projectsHeader, ...(parsed.projectsHeader || {})};
+    if (parsed.services) siteData.services = parsed.services;
+    if (parsed.it) siteData.it = parsed.it;
+    if (parsed.projects) siteData.projects = parsed.projects;
+    if (parsed.gallery) siteData.gallery = parsed.gallery;
+}
+
+async function loadData() {
+    try {
+        const res = await fetch('/api/content', {cache: 'no-store'});
+        if (res.ok) {
+            const data = await res.json();
+            if (data && Object.keys(data).length) {
+                mergeContent(data);
+                return;
+            }
+        }
+    } catch(e) { /* API недоступно (например, файл открыт локально) — используем встроенные тексты */ }
+}
+
+function saveData() {
+    localStorage.setItem('kontek_data', JSON.stringify(siteData));
+}
+
+
+
+function renderAll() {
+    document.getElementById('hero-label-text').textContent = siteData.hero.label;
+    document.getElementById('hero-title').innerHTML = siteData.hero.title;
+    document.getElementById('hero-desc').textContent = siteData.hero.desc;
+    for (let i = 0; i < 4; i++) {
+        document.getElementById('stat' + (i+1)).textContent = siteData.hero.stats[i].num;
+        document.getElementById('stat' + (i+1) + '-label').textContent = siteData.hero.stats[i].label;
+    }
+    document.getElementById('about-title').textContent = siteData.about.title;
+    document.getElementById('about-text1').textContent = siteData.about.text1;
+    document.getElementById('about-text2').textContent = siteData.about.text2;
+    for (let i = 0; i < 4; i++) {
+        document.getElementById('feat' + (i+1)).textContent = siteData.about.features[i];
+    }
+    const aboutImg = document.getElementById('about-image');
+    const aboutIcon = document.getElementById('about-icon');
+    if (siteData.about.image) {
+        aboutImg.src = siteData.about.image;
+        aboutImg.style.display = 'block';
+        aboutIcon.style.display = 'none';
+    } else {
+        aboutImg.style.display = 'none';
+        aboutIcon.style.display = 'block';
+    }
+    document.getElementById('services-label').textContent = siteData.servicesHeader.label;
+    document.getElementById('services-title').textContent = siteData.servicesHeader.title;
+    document.getElementById('services-desc').textContent = siteData.servicesHeader.desc;
+    document.getElementById('it-label').textContent = siteData.itHeader.label;
+    document.getElementById('it-title').textContent = siteData.itHeader.title;
+    document.getElementById('it-desc').textContent = siteData.itHeader.desc;
+    document.getElementById('projects-label').textContent = siteData.projectsHeader.label;
+    document.getElementById('projects-title').textContent = siteData.projectsHeader.title;
+    document.getElementById('projects-desc').textContent = siteData.projectsHeader.desc;
+    const sGrid = document.getElementById('services-grid');
+    sGrid.innerHTML = siteData.services.map(s => `
+        <div class="service-card">
+            <div class="service-icon"><i class="fas ${s.icon}"></i></div>
+            <h3>${escapeHtml(s.title)}</h3>
+            <p>${escapeHtml(s.desc)}</p>
+            <ul class="service-list">${s.items.map(it => `<li>${escapeHtml(it)}</li>`).join('')}</ul>
+        </div>
+    `).join('');
+    const itGrid = document.getElementById('it-grid');
+    itGrid.innerHTML = siteData.it.map(item => `
+        <div class="it-card">
+            ${item.badge ? `<div class="it-badge">${escapeHtml(item.badge)}</div>` : ''}
+            <div class="it-icon"><i class="fas ${item.icon}"></i></div>
+            <h3>${escapeHtml(item.title)}</h3>
+            <p>${escapeHtml(item.desc)}</p>
+            <ul class="it-list">${item.items.map(it => `<li><i class="fas fa-chevron-right"></i>${escapeHtml(it)}</li>`).join('')}</ul>
+        </div>
+    `).join('');
+    const pGrid = document.getElementById('projects-grid');
+    pGrid.innerHTML = siteData.projects.map(p => `
+        <div class="project-item">
+            <div class="project-icon"><i class="fas ${p.icon}"></i></div>
+            <h4>${escapeHtml(p.title)}</h4>
+            <p>${escapeHtml(p.desc)}</p>
+        </div>
+    `).join('');
+    const gGrid = document.getElementById('gallery-grid');
+    if (siteData.gallery.length === 0) {
+        gGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-light);padding:40px;">Фотографии будут отображаться здесь после загрузки в админ-панели</div>';
+    } else {
+        gGrid.innerHTML = siteData.gallery.map(g => `
+            <div class="gallery-item">
+                <img src="${g.src}" alt="${escapeHtml(g.caption || '')}">
+                <div class="gallery-overlay">
+                    <h4>${escapeHtml(g.caption || 'Объект')}</h4>
+                    <p>${escapeHtml(g.subcaption || '')}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+    document.getElementById('footer-address').innerHTML = siteData.contacts.footerAddress;
+    document.getElementById('cta-title').textContent = siteData.contacts.ctaTitle;
+    document.getElementById('cta-desc').textContent = siteData.contacts.ctaDesc;
+    document.getElementById('cta-btn').innerHTML = `<i class="fas fa-envelope"></i>${escapeHtml(siteData.contacts.ctaBtn)}`;
+    ['dash-services','dash-it','dash-projects','dash-images'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = id==='dash-services'?siteData.services.length:id==='dash-it'?siteData.it.length:id==='dash-projects'?siteData.projects.length:siteData.gallery.length;
+    });
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function updateGalleryCaption(idx, val) {
+    siteData.gallery[idx].caption = val;
+    saveData();
+}
+function updateGallerySubcaption(idx, val) {
+    siteData.gallery[idx].subcaption = val;
+    saveData();
+}
+function deleteGalleryImage(idx) {
+    if (!confirm('Удалить фото?')) return;
+    siteData.gallery.splice(idx, 1);
+    saveData();
+    renderGalleryAdmin();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function init() {
+    await loadData();
+    renderAll();
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
